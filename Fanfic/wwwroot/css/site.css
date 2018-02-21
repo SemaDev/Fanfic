@@ -1,35 +1,113 @@
 ﻿body {
-    padding-top: 50px;
-    padding-bottom: 20px;
+    background-color: #c9cecb;
+    font-family: 'Fira Sans', sans-serif;
+    color: #2e2b29;
 }
 
-/* Wrapping element */
-/* Set some basic padding to keep content from hitting the edges */
-.body-content {
-    padding-left: 15px;
-    padding-right: 15px;
+.container {
+    background-color: #eff1f4;
 }
 
-/* Carousel */
-.carousel-caption p {
-    font-size: 20px;
-    line-height: 1.4;
+.menuList{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:flex;
+
+}
+.menuList li input{
+    margin-right:10px;
+    margin-left:10px;
 }
 
-/* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
+.menuList li a {
+    text-decoration: none;
+    color: #2e2b29;
+    font-weight: 400;
+}
+
+.menuList li button {
+    text-decoration: none;
+    color: #2e2b29;
+    font-weight: 400;
+    padding: 33px;
+    border-radius: 0;
+    font-size: 15px;
+    padding:32px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-family: 'Fira Sans', sans-serif;
+}
+
+.menuList li button:hover {
+        text-decoration: none;
+        background-color: #d6d8da;
+        color: #2e2b29;
+}
+
+.menuList li a:hover {
+        text-decoration: none;
+        background-color: #d6d8da;
+}
+
+.seachDiv {
+    background-color: #d6d8da;
+}
+
+.searchForm {
+    width:80%;
+}
+
+.searchBtn:active {
+    background-color: #66625a;
+}
+
+.navigationDiv {
+    display:flex;
+    align-items:center;
+}
+
+.loginAnchor {
+    font-size: 15px;
+    padding:40px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.navAnchor {
+    font-size:20px;
+    padding:33px;
+}
+
+.tagDiv {
+    padding: 20px;
+    max-width: 80%;
+}
+
+.tagLabel{
+    font-size:20px;
+}
+
+
+.noDecorations {
+    text-decoration: none;
+    color: #2e2b29;
+    font-weight: 400;
+    padding: 5px;
+    padding-top: 0;
+}
+
+.tagLink a:hover {
+    text-decoration: none;
+    color: #2e2b29;
+    border-color:aqua;
+}
+
+.fanficStart a:hover::after {
+    content: '';
+    display: block;
     width: 100%;
-}
-
-/* QR code generator */
-#qrCode {
-    margin: 15px;
-}
-
-/* Hide/rearrange for smaller screens */
-@media screen and (max-width: 767px) {
-    /* Hide captions */
-    .carousel-caption {
-        display: none;
-    }
+    height: 3px;
+    background-color: #66625a;
+    margin-bottom: -3px;
 }

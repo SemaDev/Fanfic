@@ -1,16 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fanfic.Models.AccountViewModels
 {
     public class RegisterViewModel
     {
         [Required]
+        [Display(Name = "Name")]
+        [Remote(action: "CheckUserName", controller: "Account", ErrorMessage = "Name is already taken")]
+        public string UserName { get; set; }
+
+        [Required]
         [EmailAddress]
         [Display(Name = "Email")]
+        [Remote(action: "CheckRegistrationEmail", controller: "Account", ErrorMessage = "E-mail is already taken")]
         public string Email { get; set; }
 
         [Required]

@@ -23,15 +23,39 @@ namespace Fanfic
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(setupAction =>
+            {
+                setupAction.Password.RequireDigit = false;
+                setupAction.Password.RequiredLength = 6;
+                setupAction.Password.RequireLowercase = false;
+                setupAction.Password.RequireNonAlphanumeric = false;
+                setupAction.Password.RequireUppercase = false;
+            })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddAuthentication().AddFacebook(Options =>
+            {
+                Options.AppId = "2037493549871604";
+                Options.AppSecret = "eef56a2724df180864fc76d65574ce5d";
+            });
+
+            services.AddAuthentication().AddTwitter(Options =>
+            {
+                Options.ConsumerKey = "cD0iCUriIx1DLJiSNfeFzGur2";
+                Options.ConsumerSecret = "IPyehEYxmO0Vb8zCTjQL2PAABdxsqyXV9bwu78AyfqWXoU49cF";
+            });
+
+            services.AddAuthentication().AddVkontakte(Options =>
+            {
+                Options.ClientId = "6347389";
+                Options.ClientSecret = "O3bZVqskww8CVjvDI8YR";
+            });
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
@@ -56,6 +80,7 @@ namespace Fanfic
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
 
             app.UseMvc(routes =>
             {

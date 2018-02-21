@@ -2,8 +2,12 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/Fanfic",
+      "sslPort": 0
+    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:51043/",
+      "applicationUrl": "https://localhost:44347/",
       "sslPort": 44347
     }
   },

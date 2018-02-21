@@ -1,50 +1,70 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http.Authentication
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Fanfic</title>
-
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment exclude="Development">
-        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
+        <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/4.0.0/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Fanfic</a>
+
+    @await Html.PartialAsync("_ModalPartailMessage")
+
+
+    <div class="container">
+        <div class="row justify-content-between align-items-center">
+            <div class="col-md-auto">
+                <div class="navigationDiv">
+                    <img src="~/images/Logo.png" width="150" />
+                    <ul class="menuList">
+                        <li><a asp-area="" asp-controller="Home" asp-action="Popular" class="navAnchor">POPULAR</a></li>
+                        <li><a asp-area="" asp-controller="Home" asp-action="Popular" class="navAnchor">NEW</a></li>
+                    </ul>
+                </div>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
+            <div class="col-md-auto">
                 @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
-    </nav>
-    <div class="container body-content">
+        <div class="row seachDiv align-items-center row justify-content-center">
+            <form class="searchForm" method="post" action="~/home/search">
+                <div class="input-group m-4">
+                    <input type="text" id="SearchInput" class="form-control" placeholder="Search">
+                    <div class="input-group-append">
+                        <input class="btn searchBtn " aria-pressed="false" type="submit" value="Search">
+                    </div>
+                </div>
+            </form>
+            <div id="HidingDiv">
+                <div class="tagsWithLbl d-flex align-items-center justify-content-center flex-column">
+                    <span class="tagLabel"><ins> Основные тэги </ins></span>
+                    <div class="tagDiv d-flex align-items-center justify-content-center flex-wrap">
+                        @for (int i = 0; i < 30; i++)
+                        {
+                            <a class="noDecorations" href="#"> asdf;lsdf </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; 2018 - Fanfic</p>
-        </footer>
     </div>
+
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
@@ -52,13 +72,13 @@
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.2.1.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
                 crossorigin="anonymous"
                 integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
         </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/4.0.0/bootstrap.min.js"
                 asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
                 crossorigin="anonymous"
@@ -68,5 +88,32 @@
     </environment>
 
     @RenderSection("Scripts", required: false)
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $('.FicInfo').dotdotdot();
+        if ($("#MessageSpan").html().trim().length != 0) {
+            $('#gridMessageModal').modal('show');
+        }
+
+        $('#SearchInput').click(function () {
+            if ($('#HidingDiv').css('display') == 'none')
+                $('#HidingDiv').show();
+            else
+                $('#HidingDiv').hide();
+        })
+
+        $(document).ready(function () {
+            $('#username').editable();
+        });
+        $.fn.editable.defaults.mode = 'inline';
+    </script>
+
+    <link href="~/lib/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <script src="~/lib/bootstrap3-editable/js/bootstrap-editable.js"></script>
+
 </body>
 </html>
+
+
+
+

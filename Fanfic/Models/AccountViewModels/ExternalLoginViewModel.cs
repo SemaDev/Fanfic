@@ -9,7 +9,7 @@ namespace Fanfic.Models.AccountViewModels
     public class ExternalLoginViewModel
     {
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "Name")]
+        public string UserName { get; set; }
     }
 }

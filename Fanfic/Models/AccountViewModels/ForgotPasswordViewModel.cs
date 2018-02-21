@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Fanfic.Models.AccountViewModels
     {
         [Required]
         [EmailAddress]
+        [Remote (action: "CheckForgetPasswordEmail", controller:"Account", ErrorMessage = "E-mail address doesn't exist")]
         public string Email { get; set; }
     }
 }

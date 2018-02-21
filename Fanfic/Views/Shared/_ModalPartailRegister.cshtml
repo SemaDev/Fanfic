@@ -1,0 +1,53 @@
+﻿@model RegisterViewModel
+
+<div id="gridRegisterModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridModalLabel" aria-hidden="true">
+    <form  asp-controller="Account" asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body pt-1">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md">
+                                <div class="form-group">
+                                    <label asp-for="UserName"></label>
+                                    <input asp-for="UserName" class="form-control" />
+                                    <span asp-validation-for="UserName" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Email"></label>
+                                    <input asp-for="Email" class="form-control" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Password"></label>
+                                    <input asp-for="Password" class="form-control" />
+                                    <span asp-validation-for="Password" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="ConfirmPassword"></label>
+                                    <input asp-for="ConfirmPassword" class="form-control" />
+                                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex justify-content-start align-items-center">
+                                        <a href="account/ExternalLogin?provider=Vkontakte"> <img src="~/images/VK.png" width="40px" /> </a>
+                                        <a href="account/ExternalLogin?provider=Facebook"> <img src="~/images/facebook.png" class="ml-1" width="40px" /></a>
+                                        <a href="account/ExternalLogin?provider=Twitter"> <img src="~/images/Twitter.png" class="ml-1" width="40px" /></a>
+                                    </div>
+                                    <div class="form-group">
+                                        <a href="#" class="Register" data-toggle="modal" data-target="#gridLoginModal" onclick="$('#gridRegisterModal').modal('hide')">Log in?</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-around">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
