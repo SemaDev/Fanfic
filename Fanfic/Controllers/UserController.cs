@@ -14,6 +14,7 @@ using Fanfic.Models;
 using Fanfic.Services;
 using Fanfic.Models.AccountViewModels;
 using Fanfic.Models.UserViewModels;
+using Fanfic.Data;
 
 namespace Fanfic.Controllers
 {
@@ -21,6 +22,7 @@ namespace Fanfic.Controllers
     [Route("[controller]/[action]")]
     public class UserController : Controller
     {
+        private ApplicationDbContext dbContext;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
@@ -30,12 +32,14 @@ namespace Fanfic.Controllers
           UserManager<ApplicationUser> userManager,
           SignInManager<ApplicationUser> signInManager,
           ILogger<UserController> logger,
-          UrlEncoder urlEncoder)
+          UrlEncoder urlEncoder,
+          ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _urlEncoder = urlEncoder;
+            dbContext = context;
         }
 
         [HttpGet]
@@ -43,7 +47,6 @@ namespace Fanfic.Controllers
         {
             var user = await CurrentUser();
             ProfileViewModel model = new ProfileViewModel();
-            model.DateOfBirth = user.DateOfBirth;
             model.RealName = user.RealName;
             model.Sex = user.RealName;
             model.UserName = user.UserName;
@@ -52,10 +55,41 @@ namespace Fanfic.Controllers
 
         private async Task<ApplicationUser> CurrentUser()
         {
-             return await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+             return await _userManager.GetUserAsync(User);
         }
 
+        //public async Task<IActionResult> CheckUserName(int pk, string value, string name)
+        //{
+        //    if (value == null)
+        //        return StatusCode(400, "Enter user name");
+        //    if ((await _userManager.FindByNameAsync(value)) == null | name == User.Identity.Name)
+        //    {
+        //        await AlterUserName(value);
+        //        return StatusCode(200);
+        //    }
+        //    return StatusCode(400, "User name is already taken");
+        //}
 
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> SetRtealName(string name, string value, string pk)
+        {
+            ApplicationUser user = await CurrentUser();
+            user.RealName = value;
+            dbContext.Update(user);
+            await dbContext.SaveChangesAsync();
+            return StatusCode(200);
+        }
+
+        [AcceptVerbs("Get", "Post")]
+        public async Task<IActionResult> SetAboutMe(int pk, string value, string name)
+        {
+            ApplicationUser user = await CurrentUser();
+            user.AboutMe = value;
+            dbContext.Update(user);
+            await dbContext.SaveChangesAsync();
+            return StatusCode(200);
+        }
 
     }
 }

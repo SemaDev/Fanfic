@@ -46,7 +46,6 @@ namespace Fanfic.Controllers
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -59,7 +58,7 @@ namespace Fanfic.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.Email);
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null)
                 {
                     // проверяем, подтвержден ли email
@@ -71,7 +70,7 @@ namespace Fanfic.Controllers
                 }
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, false, false);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
@@ -109,7 +108,7 @@ namespace Fanfic.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -144,7 +143,7 @@ namespace Fanfic.Controllers
 
         private async Task<bool> IsEmailExists(string Email)
         {
-            if ((await _userManager.FindByNameAsync(Email)) == null)
+            if ((await _userManager.FindByEmailAsync(Email)) == null)
                 return false;
             return true;
         }

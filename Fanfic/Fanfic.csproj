@@ -5,6 +5,13 @@
     <UserSecretsId>aspnet-Fanfic-0C79C710-9D0B-4A57-9E06-4FABF1198872</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="wwwroot\lib\Новая папка\**" />
+    <Content Remove="wwwroot\lib\Новая папка\**" />
+    <EmbeddedResource Remove="wwwroot\lib\Новая папка\**" />
+    <None Remove="wwwroot\lib\Новая папка\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.Vkontakte" Version="2.0.0-rc2-final" />

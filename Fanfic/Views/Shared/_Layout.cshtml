@@ -68,6 +68,7 @@
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery-dotdotdot/dist/jquery.dotdotdot.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
@@ -87,6 +88,10 @@
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
+    <link href="~/lib/Font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <script src="https://unpkg.com/popper.js@1.12.9/dist/umd/popper.min.js"></script>
+    <link href="~/lib/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+    <script src="~/lib/bootstrap3-editable/js/bootstrap-editable.js"></script>
     @RenderSection("Scripts", required: false)
     @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
@@ -101,15 +106,13 @@
             else
                 $('#HidingDiv').hide();
         })
-
-        $(document).ready(function () {
-            $('#username').editable();
-        });
         $.fn.editable.defaults.mode = 'inline';
+        $(document).ready(function () {
+            $('#RealName').editable();
+            $('#AboutMe').editable();
+            $('#Janre').editable();
+        });
     </script>
-
-    <link href="~/lib/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
-    <script src="~/lib/bootstrap3-editable/js/bootstrap-editable.js"></script>
 
 </body>
 </html>

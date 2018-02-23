@@ -8,9 +8,8 @@ namespace Fanfic.Models.UserViewModels
 {
     public class ProfileViewModel
     {
-        public DateTime DateOfBirth { get; set; }
+        public string AboutMe { get; set; }
         public string Sex { get; set; }
-        [Remote(action: "CheckUserName", controller: "Account", ErrorMessage = "E-mail is already taken")]
         public string UserName { get; set; }
         public string RealName { get; set; }
     }

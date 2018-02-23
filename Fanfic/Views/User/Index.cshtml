@@ -3,11 +3,33 @@
     ViewData["Title"] = "My profile";
 }
 @model ProfileViewModel
-<div class="row">
-    <div class="col-md">
-        <span>User Name</span>
-        <a title="" class="editable editable-click" id="username" href="#" data-original-title="" data-title="Enter username" data-pk="1" data-type="text">@Model.UserName</a>
-
+<div class="row p-4">
+    <div class="col-md flex-column">
+        <h3 class="PersonalInfoHeader align-self-center"><ins> Personal information </ins></h3>
+        <div class="d-flex">
+            <span class="mb-2 mr-2">Nickname: @Model.UserName</span>
+        </div>
+        <div class="d-flex">
+            <span class="mb-2 mr-2">Real name: </span>
+            <a href="#" id="RealName" data-type="text" name="RealName" data-pk="2" data-url="SetRtealName" data-placement="right" data-title="Enter your firstname" class="noDecorations profileParam mr-2 editable editable-click editable-open" data-original-title="" title="">@Model.RealName</a>
+        </div>
+        <div class="d-flex">
+            <span class="mb-2 mr-2">About me:</span>
+            <a title="" class="noDecorations profileParam editable editable-pre-wrapped editable-click" name="AboutMe" data-url="SetAboutMe" data-pk="1" id="AboutMe" href="#" data-original-title="" data-title="Enter comments" data-type="textarea" data-placeholder="Your comments here...">@Model.AboutMe</a>
+        </div>
     </div>
+</div>
+
+<hr />
+
+<div class="row p-4">
+    <div>
+        <a href="#" id="Janre" data-type="select" data-pk="1" data-source="takeJanres" data-url="/post" data-title="Enter username" class="editable editable-click">asd</a>
+        <a href="#" id="Janre" data-type="select" data-pk="1" data-source="takeJanres" data-url="/post" data-title="Enter username" class="editable editable-click">asdf</a>
+        <a href="#" id="Janre" data-type="select" data-pk="1" data-source="takeJanres" data-url="/post" data-title="Enter username" class="editable editable-click">asdf</a>
+    </div>
+    
+    <a asp-action="Create" asp-controller="Fanfic" class="btn btn-primary"></a>
+
 </div>
 
