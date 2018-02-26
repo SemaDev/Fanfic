@@ -15,6 +15,7 @@ using Fanfic.Services;
 using Fanfic.Models.AccountViewModels;
 using Fanfic.Models.UserViewModels;
 using Fanfic.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Fanfic.Controllers
 {
@@ -45,30 +46,68 @@ namespace Fanfic.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var user = await CurrentUser();
+            var model = await FillProfileByName(User.Identity.Name);
+            return View(model);
+        }
+
+        private async Task<ProfileViewModel> FillProfileByName(string name)
+        {
+            var user = await _userManager.FindByNameAsync(name);
             ProfileViewModel model = new ProfileViewModel();
             model.RealName = user.RealName;
             model.Sex = user.RealName;
             model.UserName = user.UserName;
-            return View(model);
+            model.Fanfics = dbContext.Fanfics.Where(f => f.ApplicationUser == user).Include(f => f.Janre).ToList();
+            model.Janres = dbContext.Janres.ToList();
+            return model;
+        }
+
+        public async Task<IActionResult> SortFilter(int Janre, int Order, string userName)
+        {
+            var fannfics = dbContext.Fanfics.Where(f => f.Janre.Id == Janre).Where(f => f.ApplicationUser.UserName == userName).ToList();
+            if (Janre == 0)
+            {
+                fannfics = dbContext.Fanfics.Where(f => f.ApplicationUser.UserName == userName).ToList();
+            }
+            switch (Order)
+            {
+                case 1:
+                    {
+                        fannfics = fannfics.OrderBy(f => f.CreateDate).ToList();
+                        break;
+                    }
+                case 2:
+                    {
+                        fannfics = fannfics.OrderByDescending(f => f.CreateDate).ToList();
+                        break;
+                    }
+                case 3:
+                    {
+                        fannfics = fannfics.OrderBy(f => f.Name).ToList();
+                        break;
+                    }
+                case 4:
+                    {
+                        fannfics = fannfics.OrderByDescending(f => f.Name).ToList();
+                        break;
+                    }
+            }
+            var model = await FillProfileByName(userName);
+            model.Fanfics = fannfics;
+            return View("index", model);
         }
 
         private async Task<ApplicationUser> CurrentUser()
         {
              return await _userManager.GetUserAsync(User);
         }
-
-        //public async Task<IActionResult> CheckUserName(int pk, string value, string name)
-        //{
-        //    if (value == null)
-        //        return StatusCode(400, "Enter user name");
-        //    if ((await _userManager.FindByNameAsync(value)) == null | name == User.Identity.Name)
-        //    {
-        //        await AlterUserName(value);
-        //        return StatusCode(200);
-        //    }
-        //    return StatusCode(400, "User name is already taken");
-        //}
+        
+        public IActionResult DeleteFanfic(int idfanfic)
+        {
+            dbContext.Fanfics.Remove(dbContext.Fanfics.Find(idfanfic));
+            dbContext.SaveChanges();
+            return RedirectToAction("index");
+        }
 
 
         [AcceptVerbs("Get", "Post")]

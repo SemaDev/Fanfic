@@ -10,10 +10,6 @@
     height: 100%;
 }
 
-html{
-    height:100%;
-}
-
 .menuList{
     list-style:none;
     padding:0;
@@ -130,3 +126,48 @@ a.editable-click.editable-disabled {
 a.editable-empty {
     color: gray;
 }
+
+
+.InputField {
+    width: 300px;
+    padding: 6px 0 4px 10px;
+    border: 1px solid #cecece;
+    border-radius: 8px;
+}
+
+textarea {
+    overflow: auto;
+    resize: none;
+    width: 100%;
+    height: 150px;
+    border: 1px solid #cecece;
+    border-radius: 8px;
+    padding: 8px 0 8px 10px;
+}
+
+.Width40px {
+    width: 70px;
+}
+
+.DropZone {
+    width:300px;
+    height: 300px;
+    border: 2px dashed #ccc;
+    color:#ccc;
+    text-align:center;
+    overflow:hidden;
+}
+
+.DropZone2 {
+    height: 300px;
+    border: 2px dashed #ccc;
+    color: #ccc;
+    text-align: center;
+    overflow: hidden;
+}
+
+.SetBG {
+    background-color: #d6d8da;
+}
+
+

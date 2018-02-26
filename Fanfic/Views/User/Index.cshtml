@@ -5,15 +5,15 @@
 @model ProfileViewModel
 <div class="row p-4">
     <div class="col-md flex-column">
-        <h3 class="PersonalInfoHeader align-self-center"><ins> Personal information </ins></h3>
-        <div class="d-flex">
+        <h3 class="PersonalInfoHeader"><ins> Personal information </ins></h3>
+        <div>
             <span class="mb-2 mr-2">Nickname: @Model.UserName</span>
         </div>
-        <div class="d-flex">
+        <div>
             <span class="mb-2 mr-2">Real name: </span>
             <a href="#" id="RealName" data-type="text" name="RealName" data-pk="2" data-url="SetRtealName" data-placement="right" data-title="Enter your firstname" class="noDecorations profileParam mr-2 editable editable-click editable-open" data-original-title="" title="">@Model.RealName</a>
         </div>
-        <div class="d-flex">
+        <div>
             <span class="mb-2 mr-2">About me:</span>
             <a title="" class="noDecorations profileParam editable editable-pre-wrapped editable-click" name="AboutMe" data-url="SetAboutMe" data-pk="1" id="AboutMe" href="#" data-original-title="" data-title="Enter comments" data-type="textarea" data-placeholder="Your comments here...">@Model.AboutMe</a>
         </div>
@@ -22,14 +22,84 @@
 
 <hr />
 
-<div class="row p-4">
-    <div>
-        <a href="#" id="Janre" data-type="select" data-pk="1" data-source="takeJanres" data-url="/post" data-title="Enter username" class="editable editable-click">asd</a>
-        <a href="#" id="Janre" data-type="select" data-pk="1" data-source="takeJanres" data-url="/post" data-title="Enter username" class="editable editable-click">asdf</a>
-        <a href="#" id="Janre" data-type="select" data-pk="1" data-source="takeJanres" data-url="/post" data-title="Enter username" class="editable editable-click">asdf</a>
-    </div>
-    
-    <a asp-action="Create" asp-controller="Fanfic" class="btn btn-primary"></a>
+<div class="row pt-1 pl-4 pr-4 pb-4 ">
+    <div class="flex-column col-md">
+        <h3 class="PersonalInfoHeader mb-3 mt-0"><ins> My fanfics </ins></h3>
+        @if (Model.Fanfics.Count != 0)
+    {
+        <form asp-action="sortFilter" asp-controller="User">
+            <div class="input-group">
+                <input type="hidden" name="UserName" value="@Model.UserName" />
+                <select class="custom-select" id="janre" name="Order">
+                    <option selected>SortBy...</option>
+                    <option value="1">Date</option>
+                    <option value="1">DateRev</option>
+                    <option value="2">Name</option>
+                    <option value="2">NameRev</option>
+                </select>
+                <select class="custom-select" id="Order" name="Janre">
+                    <option selected>Choose janre...</option>
+                    @foreach (Janre janre in Model.Janres)
+                {
+                    <option value="@janre.Id">@janre.Caption</option>
+            }
+                </select>
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="submit">Apply</button>
+                </div>
+            </div>
+        </form>
 
+        <table class="table table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col" class="d-none"></th>
+                    <th scope="col">Caption</th>
+                    <th scope="col">Janre</th>
+                    <th scope="col">CreateDate</th>
+                </tr>
+            </thead>
+            <tbody class="TableBody">
+                @foreach (Fanfic fanfic in Model.Fanfics)
+            {
+                <tr class="tableRow">
+                    <td class="d-none hiddenId">@fanfic.Id</td>
+                    <td>@fanfic.Name</td>
+                    <td>@fanfic.Janre.Caption</td>
+                    <td>@fanfic.CreateDate</td>
+                </tr>
+        }
+            </tbody>
+        </table>
+}
+
+        <div class="  d-flex justify-content-center align-items-center w-100">
+            <a asp-action="Create" asp-controller="Fanfic" class="btn btn-primary">Create</a>
+            <form asp-action="Open" asp-controller="Fanfic">
+                <input class="idFanfic" name="idfanfic" type="hidden" />
+                <input type="submit" value="Open" class="FanficManage btn btn-secondary" />
+            </form>
+            <form asp-action="Edit" asp-controller="Fanfic">
+                <input class="idFanfic" name="idfanfic" type="hidden" />
+                <input type="submit" value="Edit" class="FanficManage btn btn-secondary" />
+            </form>
+            <form asp-action="DeleteFanfic" asp-controller="User">
+                <input class="idFanfic" name="idfanfic" type="hidden" />
+                <input type="submit" value="Delete" class="FanficManage btn btn-danger" />
+            </form>
+        </div>
+    </div>
 </div>
+
+
+<script>
+    $(".tableRow").click(function () {
+        $(".FanficManage").show();
+        $(".TableBody").children().removeClass("SetBG");
+        $(this).addClass("SetBG");
+        var a = $(this).children(".hiddenId").html();
+        $(".idFanfic").attr("value", a);
+    })
+
+</script>
 

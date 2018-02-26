@@ -2,6 +2,55 @@
 @{
     ViewData["Title"] = "Create";
 }
+@model Fanfic
 
-<h2>Create</h2>
+<div class="row p-4">
+    <div class="col-md flex-column">
+        <h3 class=""><ins>Create</ins></h3>
+        <div class="FicDisc d-flex justify-content-start align-items-start flex-row w-100 h-25">
+            <div class="DropZone d-flex align-items-center" id="DropZone">
+                <img id="DragImage" class="w-100" src="@Model.Picture" />
+            </div>
+            <form asp-controller="FanFic" asp-action="CreateFanfic" class="ml-3 w-100">
+                <input type="hidden" name="Id_fanfic" value="@Model.Id"/>
+                <div class="FicInfo align-self-start w-100 mh-100">
+                    <input type="hidden" name="Picture" value="@Model.Picture" class="Picture" />
+                    <div class="d-flex mb-2">
+                        <span class="Width40px"> Name: </span>
+                        <input name="caption" type="text" value="@Model.Name" class="InputField" />
+                    </div>
+                    <div class="d-flex mb-2">
+                        <span class="Width40px mr-2"> Janre:</span>
+                        <select class="JanreSelect2" style="width:100%" name="janre"></select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <span class="Width40px mr-2"> Tags:</span>
+                        <select class="tagSelect2" style="width:100%" multiple name="tags[]"></select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <span class="mt-1 mb-2 pr-3"> Short discription:</span>
+                        <textarea name="Discription" cols="20" rows="15">@Model.Description</textarea>
+                    </div>
+                    <div class="w-100 d-flex justify-content-center">
+                        <input type="submit" id="CreateFanfic" class="btn btn-primary" value="Go to chapters" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
+<script src="~/js/CreateFanfic.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+
+
+
+
+
+
+
 

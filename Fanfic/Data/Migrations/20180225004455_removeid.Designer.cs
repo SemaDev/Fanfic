@@ -11,9 +11,10 @@ using System;
 namespace Fanfic.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180225004455_removeid")]
+    partial class removeid
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,8 +86,6 @@ namespace Fanfic.Data.Migrations
                     b.Property<int?>("FanficId");
 
                     b.Property<string>("Picture");
-
-                    b.Property<string>("Text");
 
                     b.HasKey("Id");
 

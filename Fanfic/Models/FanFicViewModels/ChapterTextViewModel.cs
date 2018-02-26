@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Fanfic.Models
+namespace Fanfic.Models.FanFicViewModels
 {
-    public class Tag
+    public class ChapterTextViewModel
     {
-        public int Id { get; set; }
         public string Text { get; set; }
-        public List<FanficTag> FanficTags { get; set; }
     }
 }

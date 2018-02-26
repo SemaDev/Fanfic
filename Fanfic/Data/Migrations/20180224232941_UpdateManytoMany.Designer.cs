@@ -11,9 +11,10 @@ using System;
 namespace Fanfic.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180224232941_UpdateManytoMany")]
+    partial class UpdateManytoMany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,9 +85,9 @@ namespace Fanfic.Data.Migrations
 
                     b.Property<int?>("FanficId");
 
-                    b.Property<string>("Picture");
+                    b.Property<int>("Id_Fanfic");
 
-                    b.Property<string>("Text");
+                    b.Property<string>("Picture");
 
                     b.HasKey("Id");
 
@@ -103,6 +104,10 @@ namespace Fanfic.Data.Migrations
                     b.Property<string>("ApplicationUserId");
 
                     b.Property<int?>("FanficId");
+
+                    b.Property<int>("Id_ApplicationUser");
+
+                    b.Property<int>("Id_Fanfic");
 
                     b.Property<string>("Text");
 
@@ -124,6 +129,10 @@ namespace Fanfic.Data.Migrations
 
                     b.Property<int?>("CommentId");
 
+                    b.Property<int>("Id_ApplicationUser");
+
+                    b.Property<int>("Id_Comment");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ApplicationUserId");
@@ -144,6 +153,10 @@ namespace Fanfic.Data.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<int>("Id_ApplicationUser");
+
+                    b.Property<int>("Id_Janre");
+
                     b.Property<int?>("JanreId");
 
                     b.Property<string>("Name");
@@ -161,11 +174,17 @@ namespace Fanfic.Data.Migrations
 
             modelBuilder.Entity("Fanfic.Models.FanficTag", b =>
                 {
-                    b.Property<int>("FanficId");
+                    b.Property<int>("Id_Fanfic");
 
-                    b.Property<int>("TagId");
+                    b.Property<int>("Id_Tag");
 
-                    b.HasKey("FanficId", "TagId");
+                    b.Property<int?>("FanficId");
+
+                    b.Property<int?>("TagId");
+
+                    b.HasKey("Id_Fanfic", "Id_Tag");
+
+                    b.HasIndex("FanficId");
 
                     b.HasIndex("TagId");
 
@@ -193,6 +212,10 @@ namespace Fanfic.Data.Migrations
 
                     b.Property<int?>("ChapterId");
 
+                    b.Property<int>("Id_ApplicationUser");
+
+                    b.Property<int>("Id_Chapter");
+
                     b.Property<int>("Value");
 
                     b.HasKey("Id");
@@ -209,9 +232,17 @@ namespace Fanfic.Data.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("FanficId");
+
+                    b.Property<int?>("TagId");
+
                     b.Property<string>("Text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("FanficId");
+
+                    b.HasIndex("TagId");
 
                     b.ToTable("Tags");
                 });
@@ -367,14 +398,12 @@ namespace Fanfic.Data.Migrations
             modelBuilder.Entity("Fanfic.Models.FanficTag", b =>
                 {
                     b.HasOne("Fanfic.Models.Fanfic", "Fanfic")
-                        .WithMany("FanficTags")
-                        .HasForeignKey("FanficId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("FanficId");
 
                     b.HasOne("Fanfic.Models.Tag", "Tag")
-                        .WithMany("FanficTags")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("TagId");
                 });
 
             modelBuilder.Entity("Fanfic.Models.Rate", b =>
@@ -386,6 +415,17 @@ namespace Fanfic.Data.Migrations
                     b.HasOne("Fanfic.Models.Chapter", "Chapter")
                         .WithMany("Rate")
                         .HasForeignKey("ChapterId");
+                });
+
+            modelBuilder.Entity("Fanfic.Models.Tag", b =>
+                {
+                    b.HasOne("Fanfic.Models.Fanfic")
+                        .WithMany("Tags")
+                        .HasForeignKey("FanficId");
+
+                    b.HasOne("Fanfic.Models.Tag")
+                        .WithMany("Tags")
+                        .HasForeignKey("TagId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
