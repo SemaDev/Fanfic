@@ -27,6 +27,8 @@ namespace Fanfic.Data
             builder.Entity<FanficTag>()
                 .HasKey(t => new { t.FanficId, t.TagId });
 
+
+
             base.OnModelCreating(builder);
 
             // Customize the ASP.NET Identity model and override the defaults if needed.

@@ -4,22 +4,21 @@
     <h3 class="align-self-center">Chapters</h3>
 </div>
 <div class="row p-4">
-
     <div class="col-md-3 border p-0">
         <div class="d-flex align-items-start">
             <form asp-action="newChapter" asp-controller="fanfic" class="w-100">
-                <input type="hidden" name="Fanficid" value="@Model.Fanfic.Id"/>
+                <input type="hidden" name="Fanficid" value="@Model.Fanfic.Id" />
                 <input type="submit" class="btn btn-primary w-100" value="Create" />
             </form>
         </div>
-        <div class="Chapters d-flex flex-column mt-2">
+        <div class="Chapters d-flex flex-column mt-2 w-100">
             <ol>
                 @if (Model.Fanfic.Chapters != null)
                 {
-                @foreach (Chapter ch in Model.Fanfic.Chapters)
-                {
-                     <li><a asp-action="ChooseChapter" asp-controller="FanFic" asp-route-data="@ch.Id">@ch.Caption</a></li>
-                }
+                    @foreach (Chapter ch in Model.Fanfic.Chapters)
+                    {
+                        <li><a asp-action="ChooseChapter" asp-controller="FanFic" asp-route-data="@ch.Id">@ch.Caption</a></li>
+                    }
                 }
             </ol>
         </div>
@@ -27,9 +26,9 @@
     <form asp-action="CreateChapter" asp-controller="FanFic" class="col-md h-100">
         <input type="hidden" name="Fanfic" value="@Model.Fanfic.Id" />
         <input type="hidden" name="Chapter" value="@Model.Chapter.Id" />
-         <div class="d-flex mb-2">
+        <div class="d-flex mb-2">
             <span class="Width40px mt-1"> Name: </span>
-            <input name="caption" type="text" class="InputField" value="@Model.Chapter.Caption"/>
+            <input name="caption" type="text" class="InputField" value="@Model.Chapter.Caption" />
         </div>
         <input type="hidden" name="Picture" value="@Model.Chapter.Picture" class="Picture" />
         <div class="DropZone2 d-flex align-items-center w-100" id="DropZone2">
@@ -44,7 +43,7 @@
             </nav>
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-edit" role="tabpanel" aria-labelledby="nav-edit-tab">
-                    <textarea id="ChapterText" class="mt-2 h-100" name="Text" cols="20" rows="15">@Model.Chapter.Text</textarea>
+                    <textarea id="ChapterText" class="mt-2 h-100 text-justify" name="Text" cols="20" rows="15">@Model.Chapter.Text</textarea>
                 </div>
                 <div class="tab-pane fade" id="nav-show" role="tabpanel" aria-labelledby="nav-show-tab">
                     <div id="MarkDown"></div>
@@ -58,6 +57,13 @@
         </div>
 
     </form>
+</div>
+<hr />
+
+<div class="row flex-column">
+    <div class="">
+
+    </div>
 </div>
 
 <script src="~/js/CreateChapter.js"></script>

@@ -3,12 +3,19 @@
     ViewData["Title"] = "Read";
 }
 @model OpenViewModel
-<div class="row flex-column mt-3">
-    <h3 class="align-self-center">@Model.Fanfic.Name</h3>
+<div class="row flex-row justify-content-end pr-5 mt-3">
+    <h3 class="m-auto pr-2 pl-2">@Model.Fanfic.Name</h3>
+    @if (Model.Fanfic.ApplicationUser.UserName == User.Identity.Name)
+    {
+        <form asp-action="Edit" asp-controller="Fanfic" asp-route-idfanfic="@Model.Fanfic.Id">
+            <input type="submit" class="btn btn-secondary" value="Edit">
+        </form>
+    }
 </div>
+
 <div class="row p-4">
     <div class="col-md-3 p-0">
-        <div class="Chapters d-flex flex-column mt-2  position-fixed border pr-4 pt-2">
+        <div class="Chapters d-flex flex-column h-100 position-fixed border pt-3">
             <ol>
                 @if (Model.Fanfic.Chapters != null)
                 {
@@ -28,13 +35,16 @@
                 <img class="w-100" src="@Model.Chapter.Picture" />
             </div>
         }
-        <div class="mt-3 mb-2">
-            <span markdown> @Model.Chapter.Text </span>
-        </div>
-        <div class="w-100 d-flex justify-content-around align-items-center mt-1">
-            <a asp-controller="fanfic" asp-action="openNext" asp-route-idfanfic="@Model.Fanfic.Id" asp-route-idchapter="@Model.Chapter.Id" class="btn btn-secondary" value="Save">Next</a>
-            <a asp-controller="fanfic" asp-action="openPrevious" asp-route-idfanfic="@Model.Fanfic.Id" asp-route-idchapter="@Model.Chapter.Id" class="btn btn-secondary" value="Save">Previous</a>
-        </div>
+            <div class="mt-3 mb-2 ChapterContent">
+                @foreach (string text in Model.Chapter.Text.Split(new string[] { "\n" }, StringSplitOptions.None))
+                {
+                    <p markdown class="text-justify"> @text </p>
+                }
+            </div>
+            <div class="w-100 d-flex justify-content-around align-items-center mt-1">
+                <a asp-controller="fanfic" asp-action="openPrevious" asp-route-idfanfic="@Model.Fanfic.Id" asp-route-idchapter="@Model.Chapter.Id" class="btn btn-secondary" value="Save">Previous</a>
+                <a asp-controller="fanfic" asp-action="openNext" asp-route-idfanfic="@Model.Fanfic.Id" asp-route-idchapter="@Model.Chapter.Id" class="btn btn-secondary" value="Save">Next</a>
+            </div>
      </div>
 </div>
 <script src="~/js/CreateChapter.js"></script>

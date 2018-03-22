@@ -1,3 +1,6 @@
 ﻿@model ChapterTextViewModel
 @addTagHelper "*, TagHelperSamples.Markdown"
-<span markdown> @Model.Text </span>
+@foreach (string text in Model.Text.Split(new string[] { "\n" }, StringSplitOptions.None))
+{
+    <p class="text-justify" markdown> @text </p>
+}

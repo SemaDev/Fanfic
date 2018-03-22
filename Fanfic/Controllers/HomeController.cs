@@ -21,7 +21,7 @@ namespace Fanfic.Controllers
         }
         public IActionResult Index()
         {
-            List<Models.Fanfic> fanfics = dbContext.Fanfics.Include(f=>f.Janre).OrderBy(f => f.CreateDate).ToList();
+            List<Models.Fanfic> fanfics = dbContext.Fanfics.Include(f=>f.Janre).Include(f=>f.ApplicationUser).OrderBy(f => f.CreateDate).ToList();
             return View(fanfics);
         }
 

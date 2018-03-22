@@ -7,20 +7,25 @@
 <div class="content row justify-content-sm-around align-items-md-start p-4 tagLink noDecorations">
     @foreach (Fanfic f in Model)
     {
-    <a asp-action="Open" asp-controller="Fanfic" asp-route-idfanfic="@f.Id" class="w-100 noDecorations fanficStart mb-3">
+        
         <div class="FicDisc d-flex justify-content-start align-items-start flex-row border w-100 p-2 h-25">
-            <div class="ficImg pr-4 w-25">
-                <img src="@f.Picture" class="w-100" />
+            <div class="ficImg pr-4 w-25 d-flex flex-column align-items-center">
+                <a asp-action="Open" asp-controller="Fanfic" asp-route-idfanfic="@f.Id" class="w-100 noDecorations fanficStart mb-3">
+                    <img src="@f.Picture" class="w-100" />
+                </a>
+                <p class="m-0"><a asp-action="Index" asp-controller="User" asp-route-username="@f.ApplicationUser.UserName"> @f.ApplicationUser.UserName </a></p>
             </div>
-            <div class="FicInfo align-self-start w-75 mh-100 ">
-                <p class="m-0">Caption: @f.Name</p>
-                <p class="m-0">Janre: @f.Janre.Caption</p>
-                <p class="m-0 text-wrap">
-                    Discription: @f.Description
-                </p>
-            </div>
+            <a asp-action="Open" asp-controller="Fanfic" asp-route-idfanfic="@f.Id" class="w-100 noDecorations fanficStart mb-3">
+                <div class="FicInfo align-self-start w-75">
+                    <p class="m-0"><b>Caption:</b> @f.Name</p>
+                    <p class="m-0"><b>Janre: </b> @f.Janre.Caption</p>
+                    <p class="m-0 text-wrap">
+                        <b>Discription: </b>@f.Description
+                    </p>
+                </div>
+            </a>
         </div>
-    </a>
+    
     }
 </div>
 

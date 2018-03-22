@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
+using System.IO;
 
 namespace Fanfic.Controllers
 {
@@ -16,22 +18,21 @@ namespace Fanfic.Controllers
     public class FanFicController : Controller
     {
         ApplicationDbContext dbContext;
-        UserManager<ApplicationUser> _userManager;
 
         public FanFicController(ApplicationDbContext context, UserManager<ApplicationUser> manager)
         {
             dbContext = context;
-            _userManager = manager;
         }
 
-        public IActionResult Create()
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(string username)
         {
-            return View(new Models.Fanfic());
+            return View(new Models.Fanfic() { ApplicationUser = dbContext.Users.Where(user => user.UserName == username).FirstOrDefault()});
         }
 
         public IActionResult Edit(int idfanfic)
         {
-            return View("Create",dbContext.Fanfics.Find(idfanfic));
+            return View("Create", dbContext.Fanfics.Where(f => f.Id == idfanfic).Include(f => f.ApplicationUser).Include(f => f.FanficTags).ThenInclude(t => t.Tag).Include(f => f.Janre).FirstOrDefault());
         }
 
         [HttpGet]
@@ -63,7 +64,7 @@ namespace Fanfic.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFanfic(int id_fanfic, string[] tags, string janre, string caption, string discription, string picture)
+        public async Task<IActionResult> CreateFanfic(int id_fanfic, string[] tags, string janre, string caption, string discription, string picture, string userName)
         {
             Models.Fanfic fanfic = dbContext.Fanfics.Where(fan => fan.Id == id_fanfic).Include(f => f.Chapters).FirstOrDefault();
             bool edit = true;
@@ -76,7 +77,7 @@ namespace Fanfic.Controllers
             fanfic.Janre = dbContext.Janres.Where(j => j.Id == Convert.ToInt32(janre)).First();
             fanfic.Description = discription;
             fanfic.Picture = picture;
-            fanfic.ApplicationUser = await _userManager.GetUserAsync(User);
+            fanfic.ApplicationUser = dbContext.Users.Where(User => User.UserName == userName).FirstOrDefault();
             fanfic.Name = caption;
             fanfic.CreateDate = DateTime.Now;
             if (edit)
@@ -88,6 +89,13 @@ namespace Fanfic.Controllers
             return View("Chapter", new FanficMainInfoViewModel { Fanfic = fanfic, Chapter = new Chapter()});
         }
 
+        public IActionResult DeleteFanfic(int idfanfic)
+        {
+            dbContext.Fanfics.Remove(dbContext.Fanfics.Find(idfanfic));
+            dbContext.SaveChanges();
+            return RedirectToAction("index");
+        }
+
         public IActionResult NewChapter (int fanficId)
         {
             var fanfic = dbContext.Fanfics.Where(f => f.Id == fanficId).Include(c => c.Chapters).FirstOrDefault();
@@ -96,8 +104,11 @@ namespace Fanfic.Controllers
 
         private async Task addFanficTags(Models.Fanfic fanfic, List<Tag> list)
         {
+            dbContext.FanficTag.RemoveRange(dbContext.FanficTag.Where(ft => ft.Fanfic == fanfic));
+            await dbContext.SaveChangesAsync();
             foreach (Tag tag in list)
             {
+                FanficTag fanficTag = new FanficTag { Fanfic = fanfic, Tag = tag };
                 await dbContext.FanficTag.AddAsync(new FanficTag { Fanfic = fanfic, Tag = tag });
                 await dbContext.SaveChangesAsync();
             }
@@ -107,6 +118,7 @@ namespace Fanfic.Controllers
         [AllowAnonymous]
         public IActionResult RenderMarkDown(string data)
         {
+           
             return PartialView("_MarkDownView", new ChapterTextViewModel() { Text = data});
         }
 
@@ -177,7 +189,7 @@ namespace Fanfic.Controllers
         [AllowAnonymous]
         public IActionResult Open(int idfanfic)
         {
-            var fanfic = dbContext.Fanfics.Where(fan => fan.Id == idfanfic).Include(fan => fan.Chapters).FirstOrDefault();
+            var fanfic = dbContext.Fanfics.Where(fan => fan.Id == idfanfic).Include(fan => fan.Chapters).Include(fan => fan.ApplicationUser).FirstOrDefault();
             OpenViewModel model = new OpenViewModel { Fanfic = fanfic, Chapter = fanfic.Chapters.First() };
             return View(model);
         }
@@ -185,10 +197,10 @@ namespace Fanfic.Controllers
         [AllowAnonymous]
         public IActionResult OpenNext(int idfanfic, int idChapter)
         {
-            var fanfic = dbContext.Fanfics.Where(fan => fan.Id == idfanfic).Include(fan => fan.Chapters).FirstOrDefault();
+            var fanfic = dbContext.Fanfics.Where(fan => fan.Id == idfanfic).Include(fan => fan.Chapters).Include(fan => fan.ApplicationUser).FirstOrDefault();
             int index = fanfic.Chapters.IndexOf(fanfic.Chapters.Find(c => c.Id == idChapter));
             OpenViewModel model;
-            if (fanfic.Chapters[index+1] != null)
+            if (index+1 < fanfic.Chapters.Count)
                 model = new OpenViewModel { Fanfic = fanfic, Chapter = fanfic.Chapters[index+1] };
             else
                 model = new OpenViewModel { Fanfic = fanfic, Chapter = fanfic.Chapters[0] };
@@ -198,19 +210,20 @@ namespace Fanfic.Controllers
         [AllowAnonymous]
         public IActionResult OpenPrevious(int idfanfic, int idChapter)
         {
-            var fanfic = dbContext.Fanfics.Where(fan => fan.Id == idfanfic).Include(fan => fan.Chapters).FirstOrDefault();
+            var fanfic = dbContext.Fanfics.Where(fan => fan.Id == idfanfic).Include(fan => fan.Chapters).Include(fan => fan.ApplicationUser).FirstOrDefault();
             int index = fanfic.Chapters.IndexOf(fanfic.Chapters.Find(c => c.Id == idChapter));
             OpenViewModel model;
-            if (index-1<1)
+            if (index - 1 > fanfic.Chapters.Count)
                 model = new OpenViewModel { Fanfic = fanfic, Chapter = fanfic.Chapters[index - 1] };
             else
                 model = new OpenViewModel { Fanfic = fanfic, Chapter = fanfic.Chapters[0] };
             return View("open", model);
         }
 
+        [AllowAnonymous]
         public IActionResult ReadChapter(int idfanfic, int idChapter)
         {
-            var fanfic = dbContext.Fanfics.Where(fan => fan.Id == idfanfic).Include(fan => fan.Chapters).FirstOrDefault();       
+            var fanfic = dbContext.Fanfics.Where(fan => fan.Id == idfanfic).Include(fan => fan.Chapters).Include(fan => fan.ApplicationUser).FirstOrDefault();       
             var model = new OpenViewModel { Fanfic = fanfic, Chapter = dbContext.Chapters.Find(idChapter) };
             return View("open", model);
         }

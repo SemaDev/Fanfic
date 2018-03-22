@@ -41,12 +41,21 @@ $(document).ready(function () {
     });
 
     $("#nav-show-tab").click(function () {
-        $.ajax({
-            url: '/FanFic/RenderMarkDown?data=' + $('#ChapterText').html(),
-            dataType: 'html',
-            success: function (data) {
+        $.post(
+            '/FanFic/RenderMarkDown/',
+            {
+                data: ($('#ChapterText').html()),
+            },
+            function (data) {
                 $('#MarkDown').html(data);
-            }
-        });
+            });
+    });
+
+    $(document).scroll(function () {
+        if ((window.pageYOffset) >= 264)
+            $(".Chapters").css("top", 0)
+        else
+            $(".Chapters").css("top", 264 - window.pageYOffset)
+
     })
 })

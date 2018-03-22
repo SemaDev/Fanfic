@@ -170,4 +170,14 @@ textarea {
     background-color: #d6d8da;
 }
 
+.editable-container.editable-inline, .editableform div, .editableform > .control-group, .editable-input, .editableform .form-control {
+    width: 100% !important;
+}
 
+.Chapters {
+    width:15%;
+}
+
+.ChapterContent{
+    min-height:600px;
+}

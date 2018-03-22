@@ -11,7 +11,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Fanfic</title>
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+
+    <link href="~/lib/Select2/dist/css/select2.min.css" rel="stylesheet" />
 
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -93,9 +94,7 @@
         $.fn.editable.defaults.mode = 'inline';
         $(document).ready(function () {
             $(".FanficManage").hide();
-            $('#RealName').editable();
-            $('#AboutMe').editable();
-            $('#Janre').editable()
+            $('#Janre').editable();
         });
     </script>
 

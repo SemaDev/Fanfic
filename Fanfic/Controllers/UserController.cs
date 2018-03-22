@@ -43,10 +43,12 @@ namespace Fanfic.Controllers
             dbContext = context;
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string UserName)
         {
-            var model = await FillProfileByName(User.Identity.Name);
+            var model = await FillProfileByName(UserName);
+
             return View(model);
         }
 
@@ -55,11 +57,28 @@ namespace Fanfic.Controllers
             var user = await _userManager.FindByNameAsync(name);
             ProfileViewModel model = new ProfileViewModel();
             model.RealName = user.RealName;
-            model.Sex = user.RealName;
+            model.Admin = (await _userManager.GetRolesAsync(user)).FirstOrDefault() == "admin";
+            model.AboutMe = user.AboutMe;
             model.UserName = user.UserName;
             model.Fanfics = dbContext.Fanfics.Where(f => f.ApplicationUser == user).Include(f => f.Janre).ToList();
             model.Janres = dbContext.Janres.ToList();
+            model.Right = await IsUserAdmin(user);
+            model.Locked = await _userManager.IsLockedOutAsync(user);
             return model;
+        }
+
+        private async Task<ProfileViewModel.Rights> IsUserAdmin(ApplicationUser user)
+        {
+            string role;
+            if ((await CurrentUser()) != null)
+                role = (await _userManager.GetRolesAsync((await CurrentUser()))).FirstOrDefault();
+            else
+                return ProfileViewModel.Rights.User;
+            if (role == "admin")
+                return ProfileViewModel.Rights.Admin;
+            if (user.UserName == User.Identity.Name)
+                return ProfileViewModel.Rights.Owner;
+            return ProfileViewModel.Rights.User;
         }
 
         public async Task<IActionResult> SortFilter(int Janre, int Order, string userName)
@@ -97,11 +116,8 @@ namespace Fanfic.Controllers
             return View("index", model);
         }
 
-        private async Task<ApplicationUser> CurrentUser()
-        {
-             return await _userManager.GetUserAsync(User);
-        }
-        
+        private async Task<ApplicationUser> CurrentUser() => await _userManager.GetUserAsync(User);
+
         public IActionResult DeleteFanfic(int idfanfic)
         {
             dbContext.Fanfics.Remove(dbContext.Fanfics.Find(idfanfic));
@@ -128,6 +144,40 @@ namespace Fanfic.Controllers
             dbContext.Update(user);
             await dbContext.SaveChangesAsync();
             return StatusCode(200);
+        }
+
+        public async Task<IActionResult> Lock(string username)
+        {
+            ApplicationUser applicationUser = dbContext.Users.Where(user => user.UserName == username).FirstOrDefault();
+            if ((await _userManager.IsLockedOutAsync(applicationUser)) != true)
+            {
+                applicationUser.LockoutEnd = DateTime.UtcNow.AddYears(1000);
+
+            }
+            else
+                applicationUser.LockoutEnd = DateTime.UtcNow.AddYears(-1000);
+            dbContext.Update(applicationUser);
+            dbContext.SaveChanges();
+            return RedirectToAction("index", new { username = username });
+        }
+
+        public async Task<IActionResult> Delete(string username)
+        {
+            ApplicationUser applicationUser = dbContext.Users.Where(user => user.UserName == username).FirstOrDefault();
+            dbContext.Remove(applicationUser);
+            dbContext.SaveChanges();
+            return RedirectToAction("home", "index");
+        }
+
+        public async Task<IActionResult> GiveRigts(string username)
+        {
+            ApplicationUser applicationUser = dbContext.Users.Where(user => user.UserName == username).FirstOrDefault();
+            var role = (await _userManager.GetRolesAsync(applicationUser)).FirstOrDefault();
+            if (role == "admin")
+                await _userManager.RemoveFromRoleAsync(applicationUser, role);
+            else
+                await _userManager.AddToRoleAsync(applicationUser, "admin");
+            return RedirectToAction("index", new{ username = username });
         }
 
     }

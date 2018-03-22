@@ -23,26 +23,27 @@ namespace Fanfic.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
+
         public AccountController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager
-            )
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+
         }
 
         [TempData]
         public string ErrorMessage { get; set; }
 
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login(string returnUrl = null)
-        {
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
-            ViewData["ReturnUrl"] = returnUrl;
-            return View();
-        }
+        //[HttpGet]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> Login(string returnUrl = null)
+        //{
+        //    await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+        //    ViewData["ReturnUrl"] = returnUrl;
+        //    return View();
+        //}
 
         [HttpPost]
         [AllowAnonymous]
@@ -58,6 +59,12 @@ namespace Fanfic.Controllers
                     if (!await _userManager.IsEmailConfirmedAsync(user))
                     {
                         TempData["message"] = ("Verify your e-mail");
+                        return RedirectToLocal(returnUrl);
+                    }
+
+                    if (await _userManager.IsLockedOutAsync(user))
+                    {
+                        TempData["message"] = ("Your account is locked");
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -97,7 +104,7 @@ namespace Fanfic.Controllers
                 {
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
-
+                    await _userManager.SetLockoutEnabledAsync(user, false);
 
                     TempData["Message"] = "Confirm your e-mail to continue!";
                     await EmailService.SendEmailAsync(model.Email, "Confirm your account",
@@ -174,13 +181,13 @@ namespace Fanfic.Controllers
         {
             if (remoteError != null)
             {
-                TempData["Message"] = $"Error from external provider: {remoteError}";
+                TempData["message"] = $"Error from external provider: {remoteError}";
                 return RedirectToAction(nameof(Login));
             }
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                TempData["Message"] = "Provider error";
+                TempData["message"] = "Provider error";
                 return RedirectToAction(nameof(Login));
             }
 
@@ -189,6 +196,11 @@ namespace Fanfic.Controllers
             {
                 return RedirectToLocal(returnUrl);
             }
+            if (result.IsLockedOut)
+            {
+                TempData["message"] = ("You are locked");
+                return RedirectToLocal(returnUrl);
+            }    
             else
             {
                 return View(new ExternalLoginViewModel());
@@ -290,14 +302,15 @@ namespace Fanfic.Controllers
 
         private IActionResult RedirectToLocal(string returnUrl)
         {
+            if (returnUrl == "/")
+            {
+                return RedirectToAction(nameof(HomeController.Index), "Home");
+            }
             if (Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
-            else
-            {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
+            return RedirectToAction(nameof(HomeController.Index), "Home");
         }
 
         #endregion

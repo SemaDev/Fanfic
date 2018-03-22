@@ -2,21 +2,73 @@
 @{
     ViewData["Title"] = "My profile";
 }
+
 @model ProfileViewModel
 <div class="row p-4">
     <div class="col-md flex-column">
         <h3 class="PersonalInfoHeader"><ins> Personal information </ins></h3>
-        <div>
-            <span class="mb-2 mr-2">Nickname: @Model.UserName</span>
+        <div class="d-flex">
+            <span class="mb-0 mr-2">Nickname: @Model.UserName</span>
         </div>
-        <div>
-            <span class="mb-2 mr-2">Real name: </span>
-            <a href="#" id="RealName" data-type="text" name="RealName" data-pk="2" data-url="SetRtealName" data-placement="right" data-title="Enter your firstname" class="noDecorations profileParam mr-2 editable editable-click editable-open" data-original-title="" title="">@Model.RealName</a>
+        <div class="w- d-flex w-75">
+            <span class="mr-2 p-0 text-nowrap">Real name: </span>
+            @if (Model.Right == ProfileViewModel.Rights.Admin | Model.Right == ProfileViewModel.Rights.Owner)
+            {
+                <a href="#" id="RealName" data-type="text" name="RealName" data-pk="2" data-url="SetRtealName" data-placement="right" data-title="Enter your firstname" class="p-0 noDecorations profileParam mr-2 editable editable-click editable-open">@Model.RealName</a>
+            }
+            else
+            { 
+                <a href="#" id="RealName" data-type="text" name="RealName" data-pk="2" data-url="SetRtealName" data-disabled="true" data-placement="right" class="p-0 noDecorations profileParam mr-2 editable editable-click editable-open">@Model.RealName</a>
+            }
         </div>
-        <div>
-            <span class="mb-2 mr-2">About me:</span>
-            <a title="" class="noDecorations profileParam editable editable-pre-wrapped editable-click" name="AboutMe" data-url="SetAboutMe" data-pk="1" id="AboutMe" href="#" data-original-title="" data-title="Enter comments" data-type="textarea" data-placeholder="Your comments here...">@Model.AboutMe</a>
+        <div class="d-flex w-75">
+            <span class="mr-2 mt-0 text-nowrap">About me:</span>
+           @if (Model.Right == ProfileViewModel.Rights.Admin | Model.Right == ProfileViewModel.Rights.Owner)
+            {
+                <a title="" class="p-0 noDecorations profileParam editable editable-pre-wrapped editable-click" name="AboutMe" data-url="SetAboutMe" data-pk="1" id="AboutMe" href="#" data-original-title=""  data-type="textarea">@Model.AboutMe</a>
+            }
+            else
+            {
+                 <a title="" class="p-0 noDecorations profileParam editable editable-click" name="AboutMe" data-disabled="true" data-url="SetAboutMe" data-pk="1" id="AboutMe" href="#" data-original-title=""  data-type="textarea">@Model.AboutMe</a>
+            }
         </div>
+            
+
+        @if (Model.Right == ProfileViewModel.Rights.Admin)
+        {
+        <div class="d-flex w-75">
+            <span class="mb-2 mr-2 mt-0 text-nowrap">Status:</span>
+            @if (Model.Locked == true)
+            {
+                <span>Locked</span>
+            } else
+            {
+                <span>Active</span>
+            }
+        </div>
+        <form asp-controller="User" class="d-flex w-100">
+            <input type="hidden" name="username" value="@Model.UserName" />
+            @if (Model.Locked == false)
+            {
+                <input type="submit" class="btn" value="Lock" asp-action="Lock" />
+            }
+            else
+            {
+                <input type="submit" class="btn  ml-1" value="UnLock" asp-action="Lock" />
+            }
+            <input type="submit" class="btn  ml-1" value="Delete" asp-action="Delete" />
+
+            @if (!Model.Admin)
+            {
+                <input type="submit" class="btn  ml-1" value="Give admin rights" asp-action="GiveRigts" />
+            }
+            else
+            {
+                <input type="submit" class="btn  ml-1" value="Reduce admin rights" asp-action="GiveRigts" />
+            }
+        </form>
+        }
+
     </div>
 </div>
 
@@ -73,26 +125,39 @@
         </table>
 }
 
-        <div class="  d-flex justify-content-center align-items-center w-100">
-            <a asp-action="Create" asp-controller="Fanfic" class="btn btn-primary">Create</a>
-            <form asp-action="Open" asp-controller="Fanfic">
-                <input class="idFanfic" name="idfanfic" type="hidden" />
-                <input type="submit" value="Open" class="FanficManage btn btn-secondary" />
-            </form>
-            <form asp-action="Edit" asp-controller="Fanfic">
-                <input class="idFanfic" name="idfanfic" type="hidden" />
-                <input type="submit" value="Edit" class="FanficManage btn btn-secondary" />
-            </form>
-            <form asp-action="DeleteFanfic" asp-controller="User">
-                <input class="idFanfic" name="idfanfic" type="hidden" />
-                <input type="submit" value="Delete" class="FanficManage btn btn-danger" />
-            </form>
+        <div class="d-flex justify-content-center align-items-center w-100">
+            @if (Model.Right == ProfileViewModel.Rights.Admin | Model.Right == ProfileViewModel.Rights.Owner)
+            {
+                <form asp-action="Create" asp-controller="Fanfic" class="mr-1">
+                    <input type="hidden" name="username" value="@Model.UserName" />
+                    <input type="submit" value="Create" class="btn btn-primary">
+                </form>
+                
+                <form>
+                    <input class="idFanfic" name="idfanfic" type="hidden" />
+                    <input type="submit" value="Open" asp-controller="Fanfic" asp-action="Open" class="FanficManage btn btn-secondary" />
+                    <input type="submit" value="Edit" asp-controller="Fanfic" asp-action="Edit" class="FanficManage btn btn-secondary" />
+                    <input type="submit"  value="Delete" asp-action="DeleteFanfic" asp-controller="Fanfic" class="FanficManage btn btn-danger" />
+                </form>
+            }
+            else
+            {
+                <form asp-action="Open" asp-controller="Fanfic">
+                    <input class="idFanfic" name="idfanfic" type="hidden" />
+                    <input type="submit" value="Open" class="FanficManage btn btn-secondary" />
+                </form>
+            }
         </div>
     </div>
 </div>
 
 
 <script>
+    $(document).ready(function () {
+        $('#RealName').editable();
+        $('#AboutMe').editable();
+    })
+
     $(".tableRow").click(function () {
         $(".FanficManage").show();
         $(".TableBody").children().removeClass("SetBG");

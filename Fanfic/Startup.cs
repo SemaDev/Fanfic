@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Fanfic.Data;
 using Fanfic.Models;
 using Fanfic.Services;
+using Fanfic.Extensions;
 
 namespace Fanfic
 {
@@ -51,10 +52,10 @@ namespace Fanfic
                 Options.ConsumerSecret = "IPyehEYxmO0Vb8zCTjQL2PAABdxsqyXV9bwu78AyfqWXoU49cF";
             });
 
-            services.AddAuthentication().AddVkontakte(Options =>
+            services.AddAuthentication().AddVKontakte(Options =>
             {
-                Options.ClientId = "6347389";
-                Options.ClientSecret = "O3bZVqskww8CVjvDI8YR";
+                Options.ClientId = "6413095";
+                Options.ClientSecret = "eGZj7cri33hP9PivsTb2";
             });
 
             // Add application services.
@@ -76,18 +77,17 @@ namespace Fanfic
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
             app.UseStaticFiles();
-
             app.UseAuthentication();
-
-
+            app.UseUserDestroyer();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+
         }
     }
 }
